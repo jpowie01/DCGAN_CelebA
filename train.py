@@ -19,16 +19,16 @@ LEARNING_RATE = 0.0002
 DATALOADER_WORKERS = 8
 CHECKPOINTS_DIR = './output/'
 DATASET_DIR = './dataset/'
-
 USE_GPU = torch.cuda.is_available()
-if USE_GPU:
-    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+
+device = torch.device("cuda" if USE_GPU else "cpu")
 
 # Prepare directory for models checkpoints
 os.makedirs(CHECKPOINTS_DIR, exist_ok=True)
 
 # Prepare dataset for training
 train_dataset, train_loader = dataset.get(BATCH_SIZE, DATASET_DIR, DATALOADER_WORKERS)
+number_of_training_examples = len(train_dataset)
 
 # Prepare our networks for the training process
 generator = models.Generator()
@@ -37,9 +37,8 @@ discriminator = models.Discriminator()
 discriminator.apply(models.Discriminator.weights_init)
 
 # Move models to the GPU
-if USE_GPU:
-    generator.cuda()
-    discriminator.cuda()
+generator.to(device)
+discriminator.to(device)
 
 # Prepare optimizers
 criterion = nn.BCELoss()
@@ -67,16 +66,16 @@ for epoch in range(EPOCHS):
                     end_of_training = True
                     break  # Now train the discriminator
                 current_batch_size = len(batch_of_images)
-                discriminated_ground_truth_images = discriminator(batch_of_images)  # TODO: This should probably be changed..
+                discriminated_ground_truth_images = discriminator(batch_of_images.to(device))  # TODO: This should probably be changed..
 
 		# Sample random noise and pass it to generate images
-                z = torch.normal(torch.zeros(current_batch_size, 100), torch.ones(current_batch_size, 100))
+                z = torch.normal(torch.zeros(current_batch_size, 100), torch.ones(current_batch_size, 100)).to(device)
                 discriminated_generated_images = discriminator(generator(z))
 
                 # Calculate loss
-                ground_truth = torch.ones(current_batch_size, 1) * 0.1
+                ground_truth = torch.ones(current_batch_size, 1).to(device) * 0.1
                 ground_truth_loss = criterion(discriminated_ground_truth_images, ground_truth)
-                generated = torch.ones(current_batch_size, 1) * 0.9
+                generated = torch.ones(current_batch_size, 1).to(device) * 0.9
                 generated_loss = criterion(discriminated_generated_images, generated)
                 discriminator_loss = ground_truth_loss + generated_loss
                 total_discriminator_ground_truth_accuracy += torch.sum(discriminated_ground_truth_images < 0.5).item()
@@ -91,11 +90,11 @@ for epoch in range(EPOCHS):
             generator_optimizer.zero_grad()
 
             # Sample random noise and pass it to generate images
-            z = torch.normal(torch.zeros(BATCH_SIZE, 100), torch.ones(BATCH_SIZE, 100))
+            z = torch.normal(torch.zeros(BATCH_SIZE, 100), torch.ones(BATCH_SIZE, 100)).to(device)
             generated_images = generator(z)
             
             # Check how much the generator has fooled the discriminator
-            ground_truth = torch.ones(BATCH_SIZE, 1) * 0.1
+            ground_truth = torch.ones(BATCH_SIZE, 1).to(device) * 0.1
             generator_loss = criterion(discriminator(generated_images), ground_truth)
             total_generator_loss += generator_loss.item()
 
