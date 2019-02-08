@@ -184,4 +184,5 @@ pip-selfcheck.json
 
 # Custom
 dataset/
+output/
 venv/
