@@ -17,15 +17,15 @@ DISCRIMINATOR_TRAINING_ITERATIONS = 1
 BATCH_SIZE = 256
 LEARNING_RATE = 0.0002
 DATALOADER_WORKERS = 8
-WEIGHTS_DIR = './output/'
+CHECKPOINTS_DIR = './output/'
 DATASET_DIR = './dataset/'
 
 USE_GPU = torch.cuda.is_available()
 if USE_GPU:
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
-# Prepare directory for model weights
-os.makedirs(DATASET_DIR, exist_ok=True)
+# Prepare directory for models checkpoints
+os.makedirs(CHECKPOINTS_DIR, exist_ok=True)
 
 # Prepare dataset for training
 train_dataset, train_loader = dataset.get(BATCH_SIZE, DATASET_DIR, DATALOADER_WORKERS)
@@ -126,4 +126,4 @@ for epoch in range(EPOCHS):
         'discriminator_optimizer_state_dict': discriminator_optimizer.state_dict(),
         'generator_loss': generator_loss,
         'discriminator_loss': discriminator_loss,
-    }, f'{DATASET_DIR}weights_e{(epoch+1):02}_{total_discriminator_loss:.4f}_{total_generator_loss:.4f}.torch')
+    }, f'{CHECKPOINTS_DIR}checkpoint_e{(epoch+1):02}_{total_discriminator_loss:.4f}_{total_generator_loss:.4f}.torch')
