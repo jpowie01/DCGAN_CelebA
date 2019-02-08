@@ -15,7 +15,7 @@ import models
 
 # Parse configuration passed from the CLI
 parser = argparse.ArgumentParser(description='Training DCGAN on CelebA dataset')
-parser.add_argument('--epochs', '-e', type=int, default=200, help='Number of epochs')
+parser.add_argument('--epochs', '-e', type=int, default=300, help='Number of epochs')
 parser.add_argument('--discriminator-training-iterations', '-k', type=int, default=1,
                     help='Number of iterations for discriminator training (K parameter)')
 parser.add_argument('--random-label-swap', '-s', type=float, default=0.05, help='Percentage of labels that will be swapped')
@@ -24,12 +24,14 @@ parser.add_argument('--learning-rate', '-lr', type=float, default=0.0002, help='
 parser.add_argument('--dataloader-workers', '-w', type=int, default=8, help='Number of threads used by Data Loader')
 parser.add_argument('--checkpoints-directory', '-c', type=str, default='./checkpoints/',
                     help='Directory where all models checkpoints will be collected')
+parser.add_argument('--load-checkpoint', '-l', type=str, default=None, help='Continue training from checkpoint')
+parser.add_argument('--load-optimizers-from-checkpoint', '-lo', type=str, default='false', help='Load optimizers state from checkpoint')
 parser.add_argument('--dataset', '-d', type=str, default='./dataset/', help='Directory where dataset will be stored')
-parser.add_argument('--use-gpu', '-g', type=bool, default=torch.cuda.is_available(), help='Use GPU if True')
+parser.add_argument('--use-gpu', '-g', type=str, default=str(torch.cuda.is_available()), help='Use GPU if True')
 configuration = parser.parse_args()
 
 # Prepare placeholder for device used by this script (CPU or GPU)
-DEVICE = torch.device('cuda' if configuration.use_gpu else 'cpu')
+DEVICE = torch.device('cuda' if configuration.use_gpu.lower() == 'true' else 'cpu')
 
 # Prepare directory for models checkpoints
 os.makedirs(configuration.checkpoints_directory, exist_ok=True)
@@ -52,6 +54,17 @@ discriminator.to(DEVICE)
 criterion = nn.BCELoss()
 generator_optimizer = torch.optim.Adam(generator.parameters(), lr=configuration.learning_rate, betas=(0.5, 0.999))
 discriminator_optimizer = torch.optim.Adam(discriminator.parameters(), lr=configuration.learning_rate, betas=(0.5, 0.999))
+
+# Load checkpoint to continue training
+if configuration.load_checkpoint:
+    print(f'Loading checkpoint ({configuration.load_checkpoint})...')
+    checkpoint = torch.load(configuration.load_checkpoint, map_location=torch.device(DEVICE))
+    generator.load_state_dict(checkpoint['generator_model_state_dict'])
+    discriminator.load_state_dict(checkpoint['discriminator_model_state_dict'])
+    if configuration.load_optimizers_from_checkpoint.lower() == 'true':
+        print(f'Loading optimizers state from checkpoint...')
+        generator_optimizer.load_state_dict(checkpoint['generator_optimizer_state_dict'])
+        discriminator_optimizer.load_state_dict(checkpoint['discriminator_optimizer_state_dict'])
 
 # Let's train our GAN!
 for epoch in range(configuration.epochs):

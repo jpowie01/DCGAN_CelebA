@@ -15,12 +15,12 @@ HEIGHT = 2
 parser = argparse.ArgumentParser(description='Visualize DCGAN on CelebA dataset')
 parser.add_argument('--checkpoint', '-c', type=str, required=True, help='Checkpoint which should be used for visualization')
 parser.add_argument('--dataset', '-d', type=str, default='./dataset/', help='Directory where dataset will be stored')
-parser.add_argument('--use-gpu', '-g', type=bool, default=torch.cuda.is_available(), help='Use GPU if True')
+parser.add_argument('--use-gpu', '-g', type=str, default=str(torch.cuda.is_available()), help='Use GPU if True')
 parser.add_argument('--output-figure', '-o', type=str, default='figure', help='Output figure filename (without extension)')
 configuration = parser.parse_args()
 
 # Prepare placeholder for device used by this script (CPU or GPU)
-DEVICE = torch.device('cuda' if configuration.use_gpu else 'cpu')
+DEVICE = torch.device('cuda' if configuration.use_gpu.lower() == 'true' else 'cpu')
 
 # Fetch dataset for comparison
 train_dataset, train_loader = dataset.get(WIDTH*HEIGHT, configuration.dataset, 1)
