@@ -25,7 +25,7 @@ parser.add_argument('--dataloader-workers', '-w', type=int, default=8, help='Num
 parser.add_argument('--checkpoints-directory', '-c', type=str, default='./checkpoints/',
                     help='Directory where all models checkpoints will be collected')
 parser.add_argument('--load-checkpoint', '-l', type=str, default=None, help='Continue training from checkpoint')
-parser.add_argument('--load-optimizers-from-checkpoint', '-lo', type=str, default='false', help='Load optimizers state from checkpoint')
+parser.add_argument('--load-optimizers-from-checkpoint', '-lo', type=str, default='true', help='Load optimizers state from checkpoint')
 parser.add_argument('--dataset', '-d', type=str, default='./dataset/', help='Directory where dataset will be stored')
 parser.add_argument('--use-gpu', '-g', type=str, default=str(torch.cuda.is_available()), help='Use GPU if True')
 configuration = parser.parse_args()
