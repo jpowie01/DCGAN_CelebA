@@ -37,7 +37,7 @@ DEVICE = torch.device('cuda' if configuration.use_gpu.lower() == 'true' else 'cp
 os.makedirs(configuration.checkpoints_directory, exist_ok=True)
 
 # Prepare dataset for training
-train_dataset, train_loader = dataset.get(configuration.batch_size, configuration.dataset, configuration.dataloader_workers)
+train_dataset, train_loader = dataset.get_celeba(configuration.batch_size, configuration.dataset, configuration.dataloader_workers)
 number_of_training_examples = len(train_dataset)
 
 # Prepare our networks for the training process

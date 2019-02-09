@@ -23,7 +23,7 @@ configuration = parser.parse_args()
 DEVICE = torch.device('cuda' if configuration.use_gpu.lower() == 'true' else 'cpu')
 
 # Fetch dataset for comparison
-train_dataset, train_loader = dataset.get(WIDTH*HEIGHT, configuration.dataset, 1)
+train_dataset, train_loader = dataset.get_celeba(WIDTH*HEIGHT, configuration.dataset, 1)
 
 # Load checkpoint
 checkpoint = torch.load(configuration.checkpoint, map_location=torch.device(DEVICE))
