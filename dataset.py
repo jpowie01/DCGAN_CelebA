@@ -23,14 +23,23 @@ def get_cifar10(batch_size, dataset_directory, dataloader_workers):
 
 
 def get_celeba(batch_size, dataset_directory, dataloader_workers):
-    # At first, download this file into dataset_directory and unzip it:
-    # https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM
+    # 1. ownload this file into dataset_directory and unzip it:
+    #  https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM
+    # 2. Put the `img_align_celeba` directory into the `celeba` directory!
+    # 3. Dataset directory structure should look like this (required by ImageFolder from torchvision):
+    #  +- `dataset_directory`
+    #     +- celeba
+    #        +- img_align_celeba
+    #           +- 000001.jpg
+    #           +- 000002.jpg
+    #           +- 000003.jpg
+    #           +- ...
     train_transformation = transforms.Compose([
         transforms.Resize((64, 64)),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     ])
-    train_dataset = datasets.ImageFolder(dataset_directory + 'img_align_celeba', transform)
+    train_dataset = torchvision.datasets.ImageFolder(dataset_directory + 'celeba', train_transformation)
 
     # Use sampler for randomization
     training_sampler = torch.utils.data.SubsetRandomSampler(range(len(train_dataset)))

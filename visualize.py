@@ -44,20 +44,16 @@ generated_images = generator(z)
 generated_real_or_fake = discriminator(generated_images)
 
 # Preprocess generated images
-generated_images = generated_images.detach().numpy()
-images = generated_images - generated_images.min(axis=0)
-images /= generated_images.max(axis=0) - generated_images.min(axis=0)
-generated_images = np.transpose(images * 255.0, (0, 2, 3, 1)).astype(np.uint8)
+generated_images = generated_images.detach().numpy() * 0.5 + 0.5
+generated_images = np.transpose(generated_images * 255.0, (0, 2, 3, 1)).astype(np.uint8)
 
 # Fetch batch of original images
 original_images, _ = next(iter(train_loader))
 original_real_or_fake = discriminator(original_images)
 
 # Preprocess original images
-original_images = original_images.detach().numpy()
-images = original_images - original_images.min(axis=0)
-images /= original_images.max(axis=0) - original_images.min(axis=0)
-original_images = np.transpose(images * 255.0, (0, 2, 3, 1)).astype(np.uint8)
+original_images = original_images.detach().numpy() * 0.5 + 0.5
+original_images = np.transpose(original_images * 255.0, (0, 2, 3, 1)).astype(np.uint8)
 
 # Prepare outer grid on the plot
 fig = plt.figure(figsize=(10, 8))

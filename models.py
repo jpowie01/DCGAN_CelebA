@@ -6,9 +6,13 @@ import torch.nn.functional as F
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
-        self.projection = nn.Linear(100, 512*4*4)
+        self.projection = nn.Linear(100, 1024*4*4)
         self.layers = nn.Sequential(
             # Before the convolution part
+            nn.BatchNorm2d(1024),
+            nn.ReLU(),
+
+            nn.ConvTranspose2d(1024, 512, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(512),
             nn.ReLU(),
 
@@ -29,7 +33,7 @@ class Generator(nn.Module):
         
     def forward(self, random_noise):
         x = self.projection(random_noise)
-        x = x.view(-1, 512, 4, 4)
+        x = x.view(-1, 1024, 4, 4)
         return self.layers(x)
 
     @staticmethod
@@ -63,13 +67,17 @@ class Discriminator(nn.Module):
             nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2),
+
+            nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False),
+            nn.BatchNorm2d(256),
+            nn.LeakyReLU(0.2),
         )
-        self.output = nn.Linear(128*2*2, 1)
+        self.output = nn.Linear(256*2*2, 1)
         self.output_function = nn.Sigmoid()
 
     def forward(self, x):
         x = self.layers(x)
-        x = x.view(-1, 128*2*2)
+        x = x.view(-1, 256*2*2)
         x = self.output(x)
         return self.output_function(x)
 

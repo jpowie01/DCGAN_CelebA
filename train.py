@@ -19,7 +19,7 @@ parser.add_argument('--epochs', '-e', type=int, default=300, help='Number of epo
 parser.add_argument('--discriminator-training-iterations', '-k', type=int, default=1,
                     help='Number of iterations for discriminator training (K parameter)')
 parser.add_argument('--random-label-swap', '-s', type=float, default=0.05, help='Percentage of labels that will be swapped')
-parser.add_argument('--batch-size', '-b', type=int, default=256, help='Size of a single batch')
+parser.add_argument('--batch-size', '-b', type=int, default=32, help='Size of a single batch')
 parser.add_argument('--learning-rate', '-lr', type=float, default=0.0002, help='Learning rate for Adam')
 parser.add_argument('--dataloader-workers', '-w', type=int, default=8, help='Number of threads used by Data Loader')
 parser.add_argument('--checkpoints-directory', '-c', type=str, default='./checkpoints/',
