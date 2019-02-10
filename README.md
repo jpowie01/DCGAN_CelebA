@@ -39,17 +39,17 @@ $ . venv/bin/activate
 
 ![Animation](assets/figure_manipulation.gif)
 
-## Architecture
+## DCGAN Architecture
 
 ![Architecture](assets/architecture.png)
 
 ## Resources
 
-* [[arXiv](https://arxiv.org/abs/1406.2661)] __Ian J. Goodfellow,
+* [[arXiv](https://arxiv.org/abs/1406.2661)] _Ian J. Goodfellow,
   Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley,
-  Sherjil Ozair, Aaron Courville, Yoshua Bengio__
-  "Generative Adversarial Networks"
+  Sherjil Ozair, Aaron Courville, Yoshua Bengio_
+  **"Generative Adversarial Networks"**
 
-* [[arXiv](https://arxiv.org/abs/1511.06434)] __Alec Radford, Luke Metz,
-  Soumith Chintala__ "Unsupervised Representation Learning with Deep
-  Convolutional Generative Adversarial Networks"
+* [[arXiv](https://arxiv.org/abs/1511.06434)] _Alec Radford, Luke Metz,
+  Soumith Chintala_ **"Unsupervised Representation Learning with Deep
+  Convolutional Generative Adversarial Networks"**

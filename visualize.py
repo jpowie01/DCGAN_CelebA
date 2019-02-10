@@ -57,8 +57,9 @@ original_images = original_images.detach().numpy() * 0.5 + 0.5
 original_images = np.transpose(original_images * 255.0, (0, 2, 3, 1)).astype(np.uint8)
 
 # Prepare outer grid on the plot
-fig = plt.figure(figsize=(10, 8))
-outer = gridspec.GridSpec(2, 1, wspace=0.2, hspace=0.2)
+fig = plt.figure(figsize=(10, 7.5))
+fig.subplots_adjust(left=0, bottom=0, right=1, top=0.95, wspace=None, hspace=None)
+outer = gridspec.GridSpec(2, 1, wspace=0.2, hspace=0.15)
 
 # Plot all generated images
 ax = fig.add_subplot(outer[0])
