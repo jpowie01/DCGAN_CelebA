@@ -43,6 +43,12 @@ $ . venv/bin/activate
 (venv) $ python visualize.py -h
 ```
 
+## Training
+
+It takes about 50 epochs to train DCGAN that fools discriminator on
+~90% of fake images. Feel free to run it for longer time! A single epoch
+takes about ~8:45 minutes on the GTX 1060 6GB.
+
 ## Results
 
 **Visualization of example images**

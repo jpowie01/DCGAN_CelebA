@@ -15,7 +15,7 @@ import models
 
 # Parse configuration passed from the CLI
 parser = argparse.ArgumentParser(description='Training DCGAN on CelebA dataset')
-parser.add_argument('--epochs', '-e', type=int, default=300, help='Number of epochs')
+parser.add_argument('--epochs', '-e', type=int, default=100, help='Number of epochs')
 parser.add_argument('--discriminator-training-iterations', '-k', type=int, default=1,
                     help='Number of iterations for discriminator training (K parameter)')
 parser.add_argument('--random-label-swap', '-s', type=float, default=0.05, help='Percentage of labels that will be swapped')
