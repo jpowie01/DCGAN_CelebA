@@ -8,25 +8,22 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
         self.projection = nn.Linear(100, 1024*4*4)
         self.layers = nn.Sequential(
-            # Before the convolution part
-            nn.BatchNorm2d(1024),
-            nn.ReLU(),
-
+            # First block
             nn.ConvTranspose2d(1024, 512, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(512),
             nn.ReLU(),
 
-            # First block
+            # Second block
             nn.ConvTranspose2d(512, 256, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(256),
             nn.ReLU(),
 
-            # Second block
+            # Third block
             nn.ConvTranspose2d(256, 128, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(128),
             nn.ReLU(),
 
-            # Third block
+            # Fourth block
             nn.ConvTranspose2d(128, 3, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False),
             nn.Tanh(),
         )
@@ -64,10 +61,12 @@ class Discriminator(nn.Module):
             nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
 
+            # Fourth block
             nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2),
 
+            # Fifth block
             nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False),
             nn.BatchNorm2d(256),
             nn.LeakyReLU(0.2),

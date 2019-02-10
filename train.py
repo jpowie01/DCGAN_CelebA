@@ -19,7 +19,7 @@ parser.add_argument('--epochs', '-e', type=int, default=300, help='Number of epo
 parser.add_argument('--discriminator-training-iterations', '-k', type=int, default=1,
                     help='Number of iterations for discriminator training (K parameter)')
 parser.add_argument('--random-label-swap', '-s', type=float, default=0.05, help='Percentage of labels that will be swapped')
-parser.add_argument('--batch-size', '-b', type=int, default=32, help='Size of a single batch')
+parser.add_argument('--batch-size', '-b', type=int, default=64, help='Size of a single batch')
 parser.add_argument('--learning-rate', '-lr', type=float, default=0.0002, help='Learning rate for Adam')
 parser.add_argument('--dataloader-workers', '-w', type=int, default=8, help='Number of threads used by Data Loader')
 parser.add_argument('--checkpoints-directory', '-c', type=str, default='./checkpoints/',
@@ -66,12 +66,17 @@ if configuration.load_checkpoint:
         generator_optimizer.load_state_dict(checkpoint['generator_optimizer_state_dict'])
         discriminator_optimizer.load_state_dict(checkpoint['discriminator_optimizer_state_dict'])
 
+# Available labels are slightly shifted to help training
+FAKE_IMAGE = 0.9
+REAL_IMAGE = 0.1
+
 # Let's train our GAN!
 for epoch in range(configuration.epochs):
     batch = 0
     total_discriminator_loss = 0.0
     total_discriminator_ground_truth_accuracy = 0.0
     total_discriminator_generated_accuracy = 0.0
+    total_generator_accuracy = 0.0
     total_generator_loss = 0.0
     train_loader_iterator = iter(train_loader)
 
@@ -90,17 +95,21 @@ for epoch in range(configuration.epochs):
                 current_batch_size = len(batch_of_images)
                 discriminated_ground_truth_images = discriminator(batch_of_images.to(DEVICE))
 
+                # Pass real images from the dataset
+                ground_truth = torch.ones(current_batch_size, 1).to(DEVICE) * REAL_IMAGE
+                ground_truth[torch.rand(current_batch_size) < configuration.random_label_swap] = FAKE_IMAGE  # Swap some labels
+                ground_truth_loss = criterion(discriminated_ground_truth_images, ground_truth)
+
 		# Sample random noise and pass it to generate images
                 z = torch.normal(torch.zeros(current_batch_size, 100), torch.ones(current_batch_size, 100)).to(DEVICE)
                 discriminated_generated_images = discriminator(generator(z))
 
-                # Calculate loss
-                ground_truth = torch.ones(current_batch_size, 1).to(DEVICE) * 0.1
-                ground_truth[torch.rand(current_batch_size) < configuration.random_label_swap] = 0.9  # Some of labels will be swapped
-                ground_truth_loss = criterion(discriminated_ground_truth_images, ground_truth)
-                generated = torch.ones(current_batch_size, 1).to(DEVICE) * 0.9
-                generated[torch.rand(current_batch_size) < configuration.random_label_swap] = 0.1  # Some of labels will be swapped
+                # Pass generated images
+                generated = torch.ones(current_batch_size, 1).to(DEVICE) * FAKE_IMAGE
+                generated[torch.rand(current_batch_size) < configuration.random_label_swap] = REAL_IMAGE  # Swap some labels
                 generated_loss = criterion(discriminated_generated_images, generated)
+
+                # Calculate metrics
                 discriminator_loss = ground_truth_loss + generated_loss
                 total_discriminator_ground_truth_accuracy += torch.sum(discriminated_ground_truth_images < 0.5).item()
                 total_discriminator_generated_accuracy += torch.sum(discriminated_generated_images > 0.5).item()
@@ -118,9 +127,11 @@ for epoch in range(configuration.epochs):
             generated_images = generator(z)
             
             # Check how much the generator has fooled the discriminator
-            ground_truth = torch.ones(configuration.batch_size, 1).to(DEVICE) * 0.1
-            ground_truth[torch.rand(configuration.batch_size) < configuration.random_label_swap] = 0.9  # Some of labels will be swapped
-            generator_loss = criterion(discriminator(generated_images), ground_truth)
+            ground_truth = torch.ones(configuration.batch_size, 1).to(DEVICE) * REAL_IMAGE
+            ground_truth[torch.rand(configuration.batch_size) < configuration.random_label_swap] = FAKE_IMAGE  # Swap some labels
+            discriminated_generated_images = discriminator(generated_images)
+            total_generator_accuracy += torch.sum(discriminated_generated_images < 0.5).item()
+            generator_loss = criterion(discriminated_generated_images, ground_truth)
             total_generator_loss += generator_loss.item()
 
             # Update the generator
@@ -137,10 +148,11 @@ for epoch in range(configuration.epochs):
     total_discriminator_loss /= len(train_loader)
     total_discriminator_ground_truth_accuracy /= number_of_training_examples
     total_discriminator_generated_accuracy /= number_of_training_examples
+    total_generator_accuracy /= number_of_training_examples
     total_generator_loss /= len(train_loader)
     print(f'Epoch #{(epoch+1):02}/{configuration.epochs:02}: Train D-Loss: {total_discriminator_loss:.4f} '
           f'(GT Acc: {total_discriminator_ground_truth_accuracy*100:.4f}%, Gen Acc: {total_discriminator_generated_accuracy*100:.4f}%) '
-          f'Train G-Loss: {total_generator_loss:.4f}\n')
+          f'Train G-Loss: {total_generator_loss:.4f} (Acc: {total_generator_accuracy:.4f})\n')
 
     torch.save({
         'epoch': epoch,
