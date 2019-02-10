@@ -2,8 +2,10 @@ DCGAN for CelebA in PyTorch
 ===========================
 
 This repository contains an example implementation of a DCGAN
-architecture written in PyTroch. For the demonstration, I've
-used [CelebA dataset](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
+architecture written in PyTroch.
+
+For the demonstration, I've used
+[CelebA dataset](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
 
 ## How to run it?
 
@@ -14,14 +16,15 @@ to below scripts.
 
 **Download dataset:**
 
-1. Use Google Drive to download images:
-
-[https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM](https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM)
+1. Use [this Google Drive](https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM)
+   to download images (URL points to original dataset shared
+   by its authors).
 
 2. Put it into `dataset` directory and unpack.
 
-3. Wrap unpacked directory (`img_align_celeba`) into another one `celeba`. This
-   is a requirement set by PyTorch's implementation of ImageFolder.
+3. Wrap unpacked directory (`img_align_celeba`) into another one
+   named `celeba`. This is a requirement set by PyTorch's
+   implementation of ImageFolder.
 
 **Instruction:**
 

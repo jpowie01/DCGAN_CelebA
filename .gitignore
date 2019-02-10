@@ -183,6 +183,7 @@ pip-selfcheck.json
 # End of https://www.gitignore.io/api/vim,macos,python,virtualenv
 
 # Custom
-dataset/
+dataset/*
+!dataset/.gitkeep
 checkpoints/
 venv/
