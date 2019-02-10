@@ -37,7 +37,11 @@ $ . venv/bin/activate
 
 **Visualization of latent space**
 
-![Animation](assets/figure_manipulation.gif)
+Example 1 | Example 2 | Example 3 | Example 4
+:---:|:---:|:---:|:---:
+![Animation](assets/figure_manipulation_1.gif) | ![Animation](assets/figure_manipulation_2.gif) | ![Animation](assets/figure_manipulation_3.gif) | ![Animation](assets/figure_manipulation_4.gif)
+
+
 
 ## DCGAN Architecture
 
