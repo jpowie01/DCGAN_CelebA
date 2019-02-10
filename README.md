@@ -12,6 +12,16 @@ and default arguments will reproduce my results. Hyperparameters
 were taken from the papers but can be tuned by passing arguments
 to below scripts.
 
+**Download dataset:**
+
+1. Use Google Drive to download images:
+[https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM](https://drive.google.com/open?id=0B7EVK8r0v71pZjFTYXZWM3FlRnM)
+
+2. Put it into `dataset` directory and unpack this ZIP.
+
+3. Wrap unpacked directory (`img_align_celeba`) into another one `celeba`. This
+   is a requirement set by PyTorch's implementation of ImageFolder.
+
 **Instruction:**
 
 ```bash
